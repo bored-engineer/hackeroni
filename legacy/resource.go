@@ -27,6 +27,20 @@ type ProfilePictureURLs struct {
 	Large  *string `json:"large"`
 }
 
+// Best returns the highest quality profile picture url available
+func (p *ProfilePictureURLs) Best() *string {
+	if p.Large != nil {
+		return p.Large
+	}
+	if p.Medium != nil {
+		return p.Medium
+	}
+	if p.Small != nil {
+		return p.Small
+	}
+	return nil
+}
+
 // Bool allocates a new bool value to store v at and returns a pointer to it.
 func Bool(v bool) *bool { return &v }
 
