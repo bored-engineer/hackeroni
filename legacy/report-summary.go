@@ -20,11 +20,17 @@
 
 package legacy
 
+const (
+	ReportSummaryCategoryTeam string = "team"
+	ReportSummaryCategoryResearcher string = "researcher"
+)
+
 // ReportSummary represents a report summary
 type ReportSummary struct {
+	ID          *uint64 `json:"id"`
 	Category    *string `json:"category"`
+	Content     *string `json:"content"`
 	CanView     *bool   `json:"can_view?"`
 	CanCreate   *bool   `json:"can_create?"`
-	Content     *string `json:"content"`
 	ContentHTML *string `json:"content_html"`
 }
