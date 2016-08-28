@@ -55,7 +55,7 @@ type User struct {
 	TeamContext        *UserTeamContext   `json:"team_context"`
 }
 
-/*// Get looks up a user by username
+// Get looks up a user by username
 func (s *UserService) Get(username string) (*User, *Response, error) {
 	req, err := s.client.NewRequest("GET", username, nil)
 	if err != nil {
@@ -72,7 +72,7 @@ func (s *UserService) Get(username string) (*User, *Response, error) {
 
 	return user, resp, err
 }
-
+/*
 // ListPublicTeams returns the public teams associated with a username
 func (s *UserService) ListPublicTeams(username string) ([]Team, *Response, error) {
 	req, err := s.client.NewRequest("GET", fmt.Sprintf("%s/public_teams", username), nil)
