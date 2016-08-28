@@ -76,7 +76,7 @@ type Team struct {
 }
 
 // GetByHandle a team by handle
-/*func (s *TeamService) Get(handle string) (*Team, *Response, error) {
+func (s *TeamService) Get(handle string) (*Team, *Response, error) {
 	req, err := s.client.NewRequest("GET", handle, nil)
 	if err != nil {
 		return nil, nil, err
@@ -91,7 +91,7 @@ type Team struct {
 	}
 
 	return team, resp, err
-}*/
+}
 
 // TeamProfileMetrics represents a H1 team's profile metrics
 type TeamProfileMetrics struct {
