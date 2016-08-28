@@ -27,6 +27,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/google/go-querystring/query"
 )
 
 const (
@@ -48,10 +50,11 @@ type Client struct {
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
 	// Services used for talking to different parts of H1.
-	Session *SessionService
-	User    *UserService
-	Team    *TeamService
-	Report  *ReportService
+	Session    *SessionService
+	User       *UserService
+	Team       *TeamService
+	Report     *ReportService
+	Hacktivity *HacktivityService
 }
 
 type service struct {
@@ -71,6 +74,7 @@ func NewClient(httpClient *http.Client) *Client {
 	c.User = (*UserService)(&c.common)
 	c.Team = (*TeamService)(&c.common)
 	c.Report = (*ReportService)(&c.common)
+	c.Hacktivity = (*HacktivityService)(&c.common)
 
 	return c
 }
@@ -113,6 +117,22 @@ func CheckResponse(r *http.Response) error {
 	}
 	errorResponse := &ErrorResponse{Response: r}
 	return errorResponse
+}
+
+// addOptions adds the parameters in opt as URL query parameters to s
+func addOptions(s string, opt interface{}) (string, error) {
+	u, err := url.Parse(s)
+	if err != nil {
+		return s, err
+	}
+
+	qs, err := query.Values(opt)
+	if err != nil {
+		return s, err
+	}
+
+	u.RawQuery = qs.Encode()
+	return u.String(), nil
 }
 
 // Do sends an request and returns the response.
