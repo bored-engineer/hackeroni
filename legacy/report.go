@@ -24,9 +24,21 @@ import (
 	"github.com/google/go-querystring/query"
 
 	"bytes"
-//	"encoding/json"
+	//	"encoding/json"
 	"fmt"
 	"net/url"
+)
+
+// The possible report states
+const (
+	ReportStateNew           string = "new"
+	ReportStateTriaged       string = "triaged"
+	ReportStateNeedsMoreInfo string = "needs-more-info"
+	ReportStateResolved      string = "resolved"
+	ReportStateNotApplicable string = "not-applicable"
+	ReportStateInformative   string = "informative"
+	ReportStateDuplicate     string = "duplicate"
+	ReportStateSpam          string = "spam"
 )
 
 // ReportAbilities dictates what can be done with a report
@@ -69,6 +81,12 @@ type Report struct {
 	Reporter                         *User                     `json:"reporter"` // TODO: There are special objects like team_context here
 	PromoteBounties                  *bool                     `json:"promote_bounties"`
 	Team                             *Team                     `json:"team"`
+	BountyDisclosed                  *bool                     `json:"bounty_disclosed"`
+	Swag                             *bool                     `json:"swag"`
+	VoteCount                        *uint64                   `json:"vote_count"`
+	Voters                           []string                  `json:"voters"`
+	LatestDisclosableAction          *string                   `json:"latest_disclosable_action"`
+	LatestDisclosableActivityAt      *Timestamp                `json:"latest_disclosable_activity_at"`
 	HasBounty                        *bool                     `json:"has_bounty?"`
 	CanViewTeam                      *bool                     `json:"can_view_team"`
 	IsExternalBug                    *bool                     `json:"is_external_bug"`
@@ -84,6 +102,8 @@ type Report struct {
 	SuggestedBounty                  *uint64                   `json:"suggested_bounty"`
 	VulnerabilityInformation         *string                   `json:"vulnerability_information"`
 	VulnerabilityInformationHTML     *string                   `json:"vulnerability_information_html"`
+	BountyAmount                     *string                   `json:"bounty_amount"`
+	FormattedBounty                  *string                   `json:"formatted_bounty"`
 	Triggers                         map[string]CommonResponse `json:"triggers"`
 	VulnerabilityTypes               []VulnerabilityType       `json:"vulnerability_types"`
 	Attachments                      []Attachment              `json:"attachments"`
@@ -127,17 +147,17 @@ func (s *ReportService) Create(handle string, report *Report) (*Response, error)
 	}
 
 	type bodyReport struct {
-		Title string `url:"title"`
-		VulnerabilityInformation string `url:"vulnerability_information"`
-		VulnerabilityTypeIDs []uint64 `url:"vulnerability_type_ids,brackets"`
+		Title                    string   `url:"title"`
+		VulnerabilityInformation string   `url:"vulnerability_information"`
+		VulnerabilityTypeIDs     []uint64 `url:"vulnerability_type_ids,brackets"`
 	}
-	body, _ := query.Values(struct{
+	body, _ := query.Values(struct {
 		Report bodyReport `url:"report,brackets"`
 	}{
 		Report: bodyReport{
 			Title: *report.Title,
 			VulnerabilityInformation: *report.VulnerabilityInformation,
-			VulnerabilityTypeIDs: vulnerabilityTypeIds,
+			VulnerabilityTypeIDs:     vulnerabilityTypeIds,
 		},
 	})
 
