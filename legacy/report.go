@@ -39,7 +39,18 @@ const (
 	ReportStateInformative   string = "informative"
 	ReportStateDuplicate     string = "duplicate"
 	ReportStateSpam          string = "spam"
+	ReportSeverityNone       string = "none"
+	ReportSeverityLow        string = "low"
+	ReportSeverityMedium     string = "medium"
+	ReportSeverityHigh       string = "high"
+	ReportSeverityCritical   string = "critical"
 )
+
+// ReportSeverity dictates the severity of a report
+type ReportSeverity struct {
+	Rating                   *string   `json:"rating"`
+	AuthorType               *string   `json:"author_type"`
+}
 
 // ReportAbilities dictates what can be done with a report
 type ReportAbilities struct {
@@ -75,6 +86,7 @@ type Report struct {
 	State                            *string                   `json:"state"`
 	Substate                         *string                   `json:"substate"`
 	ReadableSubstate                 *string                   `json:"readable_substate"`
+	SeverityRating                   *string                   `json:"severity_rating"`
 	CreatedAt                        *Timestamp                `json:"created_at"`
 	Assignee                         *User                     `json:"assignee"` // TODO: this is probably wrong
 	CreateReferenceURL               *string                   `json:"create_reference_url"`
@@ -107,6 +119,7 @@ type Report struct {
 	Triggers                         map[string]CommonResponse `json:"triggers"`
 	VulnerabilityTypes               []VulnerabilityType       `json:"vulnerability_types"`
 	Attachments                      []Attachment              `json:"attachments"`
+	Severity                         ReportSeverity            `json:"severity"`
 	Abilities                        ReportAbilities           `json:"abilities"`
 	IsMemberOfTeam                   *bool                     `json:"is_member_of_team"`
 	Activities                       []Activity                `json:"activities"`
