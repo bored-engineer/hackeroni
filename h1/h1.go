@@ -51,7 +51,8 @@ type Client struct {
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
 	// Services used for talking to different parts of the H1 API.
-	Report *ReportService
+	Report  *ReportService
+	Program *ProgramService
 }
 
 type service struct {
@@ -60,8 +61,11 @@ type service struct {
 
 // ListOptions specifies the optional parameters to various List methods that support pagination.
 type ListOptions struct {
-	// For paginated result which page to retrieve.
+	// For paginated results which page to retrieve.
 	Page uint64 `url:"page[number],omitempty"`
+
+	// For paginated results the size of pages to retrieve
+	PageSize uint64 `url:"page[size],omitempty"`
 
 	// For lists the index to sort by
 	Sort string `url:"sort,omitempty"`
@@ -100,6 +104,7 @@ func NewClient(httpClient *http.Client) *Client {
 	c := &Client{client: httpClient, BaseURL: baseURL, UserAgent: userAgent}
 	c.common.client = c
 	c.Report = (*ReportService)(&c.common)
+	c.Program = (*ProgramService)(&c.common)
 
 	return c
 }

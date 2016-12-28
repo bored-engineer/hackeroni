@@ -21,40 +21,24 @@
 package h1
 
 import (
-	"encoding/json"
+	"fmt"
 )
 
-// Swag represents swag that has/hasn't been sent to an address.
-//
-// HackerOne API docs: https://api.hackerone.com/docs/v1#swag
-type Swag struct {
-	ID        *string    `json:"id"`
-	Type      *string    `json:"type"`
-	Sent      *bool      `json:"sent"`
-	CreatedAt *Timestamp `json:"created_at"`
-	Address   *Address   `json:"address,omitempty"`
-}
+// ProgramService handles communication with the program related methods of the H1 API.
+type ProgramService service
 
-// Helper types for JSONUnmarshal
-type swag Swag // Used to avoid recursion of JSONUnmarshal
-type swagUnmarshalHelper struct {
-	swag
-	Attributes    *swag `json:"attributes"`
-	Relationships struct {
-		Address struct {
-			Data *Address `json:"data"`
-		} `json:"address,omitempty"`
-	} `json:"relationships"`
-}
-
-// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
-func (s *Swag) UnmarshalJSON(b []byte) error {
-	var helper swagUnmarshalHelper
-	helper.Attributes = &helper.swag
-	if err := json.Unmarshal(b, &helper); err != nil {
-		return err
+// Get fetches a Program by ID
+func (s *ProgramService) Get(ID string) (*Program, *Response, error) {
+	req, err := s.client.NewRequest("GET", fmt.Sprintf("programs/%s", ID), nil)
+	if err != nil {
+		return nil, nil, err
 	}
-	*s = Swag(helper.swag)
-	s.Address = helper.Relationships.Address.Data
-	return nil
+
+	rResp := new(Program)
+	resp, err := s.client.Do(req, rResp)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return rResp, resp, err
 }

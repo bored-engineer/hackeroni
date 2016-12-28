@@ -21,40 +21,30 @@
 package h1
 
 import (
-	"encoding/json"
+	"github.com/stretchr/testify/assert"
+
+	"testing"
 )
 
-// Swag represents swag that has/hasn't been sent to an address.
-//
-// HackerOne API docs: https://api.hackerone.com/docs/v1#swag
-type Swag struct {
-	ID        *string    `json:"id"`
-	Type      *string    `json:"type"`
-	Sent      *bool      `json:"sent"`
-	CreatedAt *Timestamp `json:"created_at"`
-	Address   *Address   `json:"address,omitempty"`
-}
-
-// Helper types for JSONUnmarshal
-type swag Swag // Used to avoid recursion of JSONUnmarshal
-type swagUnmarshalHelper struct {
-	swag
-	Attributes    *swag `json:"attributes"`
-	Relationships struct {
-		Address struct {
-			Data *Address `json:"data"`
-		} `json:"address,omitempty"`
-	} `json:"relationships"`
-}
-
-// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
-func (s *Swag) UnmarshalJSON(b []byte) error {
-	var helper swagUnmarshalHelper
-	helper.Attributes = &helper.swag
-	if err := json.Unmarshal(b, &helper); err != nil {
-		return err
+func Test_Severity(t *testing.T) {
+	var actual Severity
+	loadResource(t, &actual, "tests/resources/severity.json")
+	expected := Severity{
+		ID:                 String("57"),
+		Type:               String(SeverityType),
+		Rating:             String(SeverityRatingHigh),
+		AuthorType:         String(SeverityAuthorTypeUser),
+		UserID:             Int(1337),
+		CreatedAt:          NewTimestamp("2016-02-02T04:05:06.000Z"),
+		Score:              Float64(8.7),
+		AttackComplexity:   String(SeverityAttackComplexityLow),
+		AttackVector:       String(SeverityAttackVectorAdjacent),
+		Availability:       String(SeverityAvailabilityHigh),
+		Confidentiality:    String(SeverityConfidentialityLow),
+		Integrity:          String(SeverityIntegrityHigh),
+		PrivilegesRequired: String(SeverityPrivilegesRequiredLow),
+		UserInteraction:    String(SeverityUserInteractionRequired),
+		Scope:              String(SeverityScopeChanged),
 	}
-	*s = Swag(helper.swag)
-	s.Address = helper.Relationships.Address.Data
-	return nil
+	assert.Equal(t, expected, actual)
 }

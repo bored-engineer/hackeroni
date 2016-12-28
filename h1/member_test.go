@@ -21,40 +21,38 @@
 package h1
 
 import (
-	"encoding/json"
+	"github.com/stretchr/testify/assert"
+
+	"testing"
 )
 
-// Swag represents swag that has/hasn't been sent to an address.
-//
-// HackerOne API docs: https://api.hackerone.com/docs/v1#swag
-type Swag struct {
-	ID        *string    `json:"id"`
-	Type      *string    `json:"type"`
-	Sent      *bool      `json:"sent"`
-	CreatedAt *Timestamp `json:"created_at"`
-	Address   *Address   `json:"address,omitempty"`
-}
-
-// Helper types for JSONUnmarshal
-type swag Swag // Used to avoid recursion of JSONUnmarshal
-type swagUnmarshalHelper struct {
-	swag
-	Attributes    *swag `json:"attributes"`
-	Relationships struct {
-		Address struct {
-			Data *Address `json:"data"`
-		} `json:"address,omitempty"`
-	} `json:"relationships"`
-}
-
-// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
-func (s *Swag) UnmarshalJSON(b []byte) error {
-	var helper swagUnmarshalHelper
-	helper.Attributes = &helper.swag
-	if err := json.Unmarshal(b, &helper); err != nil {
-		return err
+func Test_Member(t *testing.T) {
+	var actual Member
+	loadResource(t, &actual, "tests/resources/member.json")
+	expected := Member{
+		ID:   String("1337"),
+		Type: String(MemberType),
+		Permissions: []*string{
+			String(MemberPermissionProgramManagement),
+			String(MemberPermissionReportManagement),
+			String(MemberPermissionRewardManagement),
+			String(MemberPermissionUserManagement),
+		},
+		CreatedAt: NewTimestamp("2016-02-02T04:05:06.000Z"),
+		User: &User{
+			ID:       String("1337"),
+			Type:     String(UserType),
+			Disabled: Bool(false),
+			Username: String("api-example"),
+			Name:     String("API Example"),
+			ProfilePicture: UserProfilePicture{
+				Size62x62:   String("/assets/avatars/default.png"),
+				Size82x82:   String("/assets/avatars/default.png"),
+				Size110x110: String("/assets/avatars/default.png"),
+				Size260x260: String("/assets/avatars/default.png"),
+			},
+			CreatedAt: NewTimestamp("2016-02-02T04:05:06.000Z"),
+		},
 	}
-	*s = Swag(helper.swag)
-	s.Address = helper.Relationships.Address.Data
-	return nil
+	assert.Equal(t, expected, actual)
 }

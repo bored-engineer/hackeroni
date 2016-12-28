@@ -30,9 +30,13 @@ func Test_Group(t *testing.T) {
 	var actual Group
 	loadResource(t, &actual, "tests/resources/group.json")
 	expected := Group{
-		ID:        String("1337"),
-		Type:      String(GroupType),
-		Name:      String("Admin"),
+		ID:   String("1337"),
+		Type: String(GroupType),
+		Name: String("Admin"),
+		Permissions: []*string{
+			String(GroupPermissionUserManagement),
+			String(GroupPermissionReportManagement),
+		},
 		CreatedAt: NewTimestamp("2016-02-02T04:05:06.000Z"),
 	}
 	assert.Equal(t, expected, actual)

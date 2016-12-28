@@ -33,13 +33,23 @@ type Program struct {
 	Handle    *string    `json:"handle"`
 	CreatedAt *Timestamp `json:"created_at"`
 	UpdatedAt *Timestamp `json:"updated_at"`
+	Groups    []*Group   `json:"groups,omitempty"`
+	Members   []*Member  `json:"member,omitempty"`
 }
 
 // Helper types for JSONUnmarshal
 type program Program // Used to avoid recursion of JSONUnmarshal
 type programUnmarshalHelper struct {
 	program
-	Attributes *program `json:"attributes"`
+	Attributes    *program `json:"attributes"`
+	Relationships struct {
+		Groups struct {
+			Data []*Group `json:"data"`
+		} `json:"groups"`
+		Members struct {
+			Data []*Member `json:"data"`
+		} `json:"members"`
+	} `json:"relationships"`
 }
 
 // UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
@@ -50,5 +60,7 @@ func (p *Program) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*p = Program(helper.program)
+	p.Groups = helper.Relationships.Groups.Data
+	p.Members = helper.Relationships.Members.Data
 	return nil
 }

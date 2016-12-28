@@ -18,43 +18,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package h1
+package main
 
 import (
-	"encoding/json"
+	"github.com/uber-go/hackeroni/h1"
+
+	"golang.org/x/crypto/ssh/terminal"
+
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+	"syscall"
 )
 
-// Swag represents swag that has/hasn't been sent to an address.
-//
-// HackerOne API docs: https://api.hackerone.com/docs/v1#swag
-type Swag struct {
-	ID        *string    `json:"id"`
-	Type      *string    `json:"type"`
-	Sent      *bool      `json:"sent"`
-	CreatedAt *Timestamp `json:"created_at"`
-	Address   *Address   `json:"address,omitempty"`
-}
+func main() {
 
-// Helper types for JSONUnmarshal
-type swag Swag // Used to avoid recursion of JSONUnmarshal
-type swagUnmarshalHelper struct {
-	swag
-	Attributes    *swag `json:"attributes"`
-	Relationships struct {
-		Address struct {
-			Data *Address `json:"data"`
-		} `json:"address,omitempty"`
-	} `json:"relationships"`
-}
+	fmt.Print("HackerOne API Identifier: ")
+	r := bufio.NewReader(os.Stdin)
+	identifier, _ := r.ReadString('\n')
 
-// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
-func (s *Swag) UnmarshalJSON(b []byte) error {
-	var helper swagUnmarshalHelper
-	helper.Attributes = &helper.swag
-	if err := json.Unmarshal(b, &helper); err != nil {
-		return err
+	fmt.Print("HackerOne API Token: ")
+	token, _ := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Print("\n")
+
+	tp := h1.APIAuthTransport{
+		APIIdentifier: strings.TrimSpace(identifier),
+		APIToken:      strings.TrimSpace(string(token)),
 	}
-	*s = Swag(helper.swag)
-	s.Address = helper.Relationships.Address.Data
-	return nil
+
+	client := h1.NewClient(tp.Client())
+
+	fmt.Print("Program ID: ")
+	programID, _ := r.ReadString('\n')
+	fmt.Print("\n")
+
+	program, _, err := client.Program.Get(strings.TrimSpace(programID))
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Program: %#v\n", program)
+
 }

@@ -24,37 +24,47 @@ import (
 	"encoding/json"
 )
 
-// Swag represents swag that has/hasn't been sent to an address.
+// MemberPermission represent possible permissions sizes for a member
 //
-// HackerOne API docs: https://api.hackerone.com/docs/v1#swag
-type Swag struct {
-	ID        *string    `json:"id"`
-	Type      *string    `json:"type"`
-	Sent      *bool      `json:"sent"`
-	CreatedAt *Timestamp `json:"created_at"`
-	Address   *Address   `json:"address,omitempty"`
+// HackerOne API docs: https://api.hackerone.com/docs/v1#member
+const (
+	MemberPermissionRewardManagement  string = "reward_management"
+	MemberPermissionProgramManagement string = "program_management"
+	MemberPermissionUserManagement    string = "user_management"
+	MemberPermissionReportManagement  string = "report_management"
+)
+
+// Member represents a user in a program
+//
+// HackerOne API docs: https://api.hackerone.com/docs/v1#member
+type Member struct {
+	ID          *string    `json:"id"`
+	Type        *string    `json:"type"`
+	Permissions []*string  `json:"permissions"`
+	CreatedAt   *Timestamp `json:"created_at"`
+	User        *User      `json:"user"`
 }
 
 // Helper types for JSONUnmarshal
-type swag Swag // Used to avoid recursion of JSONUnmarshal
-type swagUnmarshalHelper struct {
-	swag
-	Attributes    *swag `json:"attributes"`
+type member Member // Used to avoid recursion of JSONUnmarshal
+type memberUnmarshalHelper struct {
+	member
+	Attributes    *member `json:"attributes"`
 	Relationships struct {
-		Address struct {
-			Data *Address `json:"data"`
-		} `json:"address,omitempty"`
+		User struct {
+			Data *User `json:"data"`
+		} `json:"user"`
 	} `json:"relationships"`
 }
 
 // UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
-func (s *Swag) UnmarshalJSON(b []byte) error {
-	var helper swagUnmarshalHelper
-	helper.Attributes = &helper.swag
+func (m *Member) UnmarshalJSON(b []byte) error {
+	var helper memberUnmarshalHelper
+	helper.Attributes = &helper.member
 	if err := json.Unmarshal(b, &helper); err != nil {
 		return err
 	}
-	*s = Swag(helper.swag)
-	s.Address = helper.Relationships.Address.Data
+	*m = Member(helper.member)
+	m.User = helper.Relationships.User.Data
 	return nil
 }
