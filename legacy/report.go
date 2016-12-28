@@ -48,8 +48,8 @@ const (
 
 // ReportSeverity dictates the severity of a report
 type ReportSeverity struct {
-	Rating                   *string   `json:"rating"`
-	AuthorType               *string   `json:"author_type"`
+	Rating     *string `json:"rating"`
+	AuthorType *string `json:"author_type"`
 }
 
 // ReportAbilities dictates what can be done with a report

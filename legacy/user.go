@@ -72,6 +72,7 @@ func (s *UserService) Get(username string) (*User, *Response, error) {
 
 	return user, resp, err
 }
+
 /*
 // ListPublicTeams returns the public teams associated with a username
 func (s *UserService) ListPublicTeams(username string) ([]Team, *Response, error) {

@@ -21,7 +21,7 @@
 package legacy
 
 const (
-	ReportSummaryCategoryTeam string = "team"
+	ReportSummaryCategoryTeam       string = "team"
 	ReportSummaryCategoryResearcher string = "researcher"
 )
 
