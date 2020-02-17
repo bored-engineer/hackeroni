@@ -25,6 +25,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"bytes"
+	"context"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -157,16 +158,14 @@ func Test_NewRequest(t *testing.T) {
 	assert.Nil(t, err)
 	u, err := url.Parse("https://api.hackerone.com/relativepath")
 	assert.Nil(t, err)
-	expected := &http.Request{
-		Method:     "GET",
-		URL:        u,
-		Proto:      "HTTP/1.1",
-		ProtoMajor: 1,
-		ProtoMinor: 1,
-		Header: http.Header{
-			"User-Agent": []string{userAgent},
-		},
-		Host: "api.hackerone.com",
+	expected, _ := http.NewRequestWithContext(
+		context.Background(),
+		"GET",
+		u.String(),
+		nil,
+	)
+	expected.Header = http.Header{
+		"User-Agent": []string{userAgent},
 	}
 	assert.Equal(t, expected, req)
 }

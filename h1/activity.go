@@ -96,6 +96,10 @@ func (a *Activity) Activity() (activity interface{}) {
 		activity = &ActivityBountySuggested{}
 	case ActivityBugClonedType:
 		activity = &ActivityBugCloned{}
+	case ActivityCommentType:
+		activity = &ActivityComment{}
+	case ActivityHackerRequestedMediationType:
+		activity = &ActivityHackerRequestedMediation{}
 	case ActivityExternalUserInvitationCancelledType:
 		activity = &ActivityExternalUserInvitationCancelled{}
 	case ActivityExternalUserInvitedType:
@@ -177,6 +181,52 @@ func (a *ActivityBountySuggested) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*a = ActivityBountySuggested(helper.Attributes)
+	return nil
+}
+
+// ActivityComment occurs when a comment is added.
+//
+// HackerOne API docs: https://api.hackerone.com/docs/v1#activity-comment
+type ActivityComment struct {
+	Message *string `json:"message"`
+}
+
+// Helper types for JSONUnmarshal
+type activityComment ActivityComment // Used to avoid recursion of JSONUnmarshal
+type activityCommentUnmarshalHelper struct {
+	Attributes activityComment `json:"attributes"`
+}
+
+// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
+func (a *ActivityComment) UnmarshalJSON(b []byte) error {
+	var helper activityCommentUnmarshalHelper
+	if err := json.Unmarshal(b, &helper); err != nil {
+		return err
+	}
+	*a = ActivityComment(helper.Attributes)
+	return nil
+}
+
+// ActivityHackerRequestedMediation occurs when a comment is added.
+//
+// HackerOne API docs: https://api.hackerone.com/docs/v1#activity-bounty-suggested
+type ActivityHackerRequestedMediation struct {
+	Message *string `json:"message"`
+}
+
+// Helper types for JSONUnmarshal
+type activityHackerRequestedMediation ActivityHackerRequestedMediation // Used to avoid recursion of JSONUnmarshal
+type activityHackerRequestedMediationUnmarshalHelper struct {
+	Attributes activityComment `json:"attributes"`
+}
+
+// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
+func (a *ActivityHackerRequestedMediation) UnmarshalJSON(b []byte) error {
+	var helper activityHackerRequestedMediationUnmarshalHelper
+	if err := json.Unmarshal(b, &helper); err != nil {
+		return err
+	}
+	*a = ActivityHackerRequestedMediation(helper.Attributes)
 	return nil
 }
 

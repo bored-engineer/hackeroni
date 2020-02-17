@@ -32,6 +32,7 @@ const (
 	ActivityBountySuggestedType                 string = "activity-bounty-suggested"
 	ActivityBugClonedType                       string = "activity-bug-cloned"
 	ActivityBugDuplicateType                    string = "activity-bug-duplicate"
+	ActivityBugFiledType                        string = "activity-bug-filed"
 	ActivityBugInformativeType                  string = "activity-bug-informative"
 	ActivityBugNeedsMoreInfoType                string = "activity-bug-needs-more-info"
 	ActivityBugNewType                          string = "activity-bug-new"

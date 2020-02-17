@@ -30,12 +30,12 @@ func Test_Report(t *testing.T) {
 	var actual Report
 	loadResource(t, &actual, "tests/resources/report.json")
 	expected := Report{
-		ID:    String("1337"),
-		Type:  String(ReportType),
-		Title: String("XSS in login form"),
+		ID:                       String("1337"),
+		Type:                     String(ReportType),
+		Title:                    String("XSS in login form"),
 		VulnerabilityInformation: String("..."),
-		State:     String("new"),
-		CreatedAt: NewTimestamp("2016-02-02T04:05:06.000Z"),
+		State:                    String("new"),
+		CreatedAt:                NewTimestamp("2016-02-02T04:05:06.000Z"),
 		Program: &Program{
 			ID:        String("1337"),
 			Type:      String(ProgramType),
