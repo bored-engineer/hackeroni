@@ -100,6 +100,8 @@ func (a *Activity) Activity() (activity interface{}) {
 		activity = &ActivityComment{}
 	case ActivityHackerRequestedMediationType:
 		activity = &ActivityHackerRequestedMediation{}
+	case ActivityMediationRequestedType:
+		activity = &ActivityMediationRequested{}
 	case ActivityExternalUserInvitationCancelledType:
 		activity = &ActivityExternalUserInvitationCancelled{}
 	case ActivityExternalUserInvitedType:
@@ -207,7 +209,7 @@ func (a *ActivityComment) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// ActivityHackerRequestedMediation occurs when a comment is added.
+// ActivityHackerRequestedMediation occurs when a hacker requests mediation.
 //
 // HackerOne API docs: https://api.hackerone.com/docs/v1#activity-bounty-suggested
 type ActivityHackerRequestedMediation struct {
@@ -227,6 +229,29 @@ func (a *ActivityHackerRequestedMediation) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*a = ActivityHackerRequestedMediation(helper.Attributes)
+	return nil
+}
+
+// ActivityMediationRequested occurs when occurs when a mediation is requested.
+//
+// HackerOne API docs: https://api.hackerone.com/docs/v1#activity-bounty-suggested
+type ActivityMediationRequested struct {
+	Message *string `json:"message"`
+}
+
+// Helper types for JSONUnmarshal
+type activityMediationRequested ActivityMediationRequested // Used to avoid recursion of JSONUnmarshal
+type activityMediationRequestedUnmarshalHelper struct {
+	Attributes activityComment `json:"attributes"`
+}
+
+// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
+func (a *ActivityMediationRequested) UnmarshalJSON(b []byte) error {
+	var helper activityMediationRequestedUnmarshalHelper
+	if err := json.Unmarshal(b, &helper); err != nil {
+		return err
+	}
+	*a = ActivityMediationRequested(helper.Attributes)
 	return nil
 }
 
