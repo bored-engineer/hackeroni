@@ -4,7 +4,7 @@ A Go interface around [api.hackerone.com](https://api.hackerone.com/).
 
 # Usage
 ```go
-import "github.com/uber-go/hackeroni/h1"
+import "github.com/bored-engineer/hackeroni/h1"
 ```
 
 To list all reports matching a filter:

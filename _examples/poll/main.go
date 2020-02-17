@@ -21,8 +21,8 @@
 package main
 
 import (
-	"github.com/uber-go/hackeroni/h1"
-	"github.com/uber-go/hackeroni/polling"
+	"github.com/bored-engineer/hackeroni/h1"
+	"github.com/bored-engineer/hackeroni/polling"
 
 	"golang.org/x/crypto/ssh/terminal"
 

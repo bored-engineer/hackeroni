@@ -21,7 +21,7 @@
 package polling
 
 import (
-	"github.com/uber-go/hackeroni/h1"
+	"github.com/bored-engineer/hackeroni/h1"
 
 	"github.com/robmccoll/mitlru"
 
