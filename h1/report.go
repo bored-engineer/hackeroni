@@ -69,6 +69,7 @@ type Report struct {
 	Activities               []Activity          `json:"activities,omitempty"`
 	Bounties                 []Bounty            `json:"bounties,omitempty"`
 	Summaries                []ReportSummary     `json:"summaries,omitempty"`
+	Weakness                 *Weakness           `json:"weakness,omitempty"`
 }
 
 // Helper types for JSONUnmarshal
@@ -107,6 +108,9 @@ type reportUnmarshalHelper struct {
 		Summaries struct {
 			Data []ReportSummary `json:"data"`
 		} `json:"summaries"`
+		Weakness struct {
+			Data *Weakness `json:"data"`
+		} `json:"weakness"`
 	} `json:"relationships"`
 }
 
@@ -131,6 +135,7 @@ func (r *Report) UnmarshalJSON(b []byte) error {
 	}
 	r.Bounties = helper.Relationships.Bounties.Data
 	r.Summaries = helper.Relationships.Summaries.Data
+	r.Weakness = helper.Relationships.Weakness.Data
 	return nil
 }
 
