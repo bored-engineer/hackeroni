@@ -96,6 +96,8 @@ func (a *Activity) Activity() (activity interface{}) {
 		activity = &ActivityBountySuggested{}
 	case ActivityBugClonedType:
 		activity = &ActivityBugCloned{}
+	case ActivityBugTriagedType:
+		activity = &ActivityBugTriaged{}	
 	case ActivityCommentType:
 		activity = &ActivityComment{}
 	case ActivityHackerRequestedMediationType:
@@ -275,6 +277,29 @@ func (a *ActivityBugCloned) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*a = ActivityBugCloned(helper.Attributes)
+	return nil
+}
+
+// ActivityBugTriaged occurs when a bug is triaged.
+//
+// HackerOne API docs: https://api.hackerone.com/docs/v1#activity-bug-triaged
+type ActivityBugTriaged struct {
+	Message *string `json:"message"`
+}
+
+// Helper types for JSONUnmarshal
+type activityBugTriaged ActivityBugTriaged // Used to avoid recursion of JSONUnmarshal
+type activityBugTriagedUnmarshalHelper struct {
+	Attributes activityBugTriaged `json:"attributes"`
+}
+
+// UnmarshalJSON allows JSONAPI attributes and relationships to unmarshal cleanly.
+func (a *ActivityBugTriaged) UnmarshalJSON(b []byte) error {
+	var helper activityBugTriagedUnmarshalHelper
+	if err := json.Unmarshal(b, &helper); err != nil {
+		return err
+	}
+	*a = ActivityBugTriaged(helper.Attributes)
 	return nil
 }
 
