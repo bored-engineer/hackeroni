@@ -71,6 +71,7 @@ const (
 	SeverityType                                string = "severity"
 	UserType                                    string = "user"
 	VulnerabilityTypeType                       string = "vulnerability-type"
+	WeaknessType                                string = "weakness"
 )
 
 // Bool allocates a new bool value to store v at and returns a pointer to it.
