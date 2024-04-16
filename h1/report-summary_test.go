@@ -50,6 +50,17 @@ func Test_ReportSummary(t *testing.T) {
 			},
 			CreatedAt: NewTimestamp("2016-02-02T04:05:06.000Z"),
 		},
+		Attachments: []Attachment{
+			Attachment{
+				ID:          String("1337"),
+				Type:        String(AttachmentType),
+				FileName:    String("root.rb"),
+				ContentType: String("text/x-c++"),
+				FileSize:    Int(2873),
+				ExpiringURL: String("/system/attachments/files/000/001/337/original/root.rb?1454385906"),
+				CreatedAt:   NewTimestamp("2016-02-02T04:05:06.000Z"),
+			},
+		},
 	}
 	assert.Equal(t, expected, actual)
 }

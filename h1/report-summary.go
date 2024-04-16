@@ -36,13 +36,14 @@ const (
 //
 // HackerOne API docs: https://api.hackerone.com/docs/v1#report-summary
 type ReportSummary struct {
-	ID        *string    `json:"id"`
-	Type      *string    `json:"type"`
-	Content   *string    `json:"content"`
-	Category  *string    `json:"category"`
-	CreatedAt *Timestamp `json:"created_at"`
-	UpdatedAt *Timestamp `json:"updated_at"`
-	User      *User      `json:"user"`
+	ID          *string      `json:"id"`
+	Type        *string      `json:"type"`
+	Content     *string      `json:"content"`
+	Category    *string      `json:"category"`
+	CreatedAt   *Timestamp   `json:"created_at"`
+	UpdatedAt   *Timestamp   `json:"updated_at"`
+	User        *User        `json:"user"`
+	Attachments []Attachment `json:"attachments"`
 }
 
 // Helper types for JSONUnmarshal
@@ -54,6 +55,9 @@ type reportSummaryUnmarshalHelper struct {
 		User struct {
 			Data *User `json:"data"`
 		} `json:"user"`
+		Attachments struct {
+			Data []Attachment `json:"data"`
+		} `json:"attachments"`
 	} `json:"relationships"`
 }
 
@@ -66,5 +70,6 @@ func (r *ReportSummary) UnmarshalJSON(b []byte) error {
 	}
 	*r = ReportSummary(helper.reportSummary)
 	r.User = helper.Relationships.User.Data
+	r.Attachments = helper.Relationships.Attachments.Data
 	return nil
 }
